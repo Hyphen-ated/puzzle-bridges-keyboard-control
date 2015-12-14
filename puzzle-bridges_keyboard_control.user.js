@@ -4,13 +4,16 @@
 // @description Use WASD to move a cursor and IJKL to draw bridges
 // @author Hyphen-ated
 // @include http://www.puzzle-bridges.com/*
+// @run-at document-end
 // ==/UserScript==
+function init_puzzle() {
+    your_position_x = 0;
+    your_position_y = 0;
+    game_table = document.getElementById("BridgesTable");
+    max_x = game_table.rows.length;
+    max_y = game_table.rows[0].cells.length;
+}
 
-your_position_x = 0;
-your_position_y = 0;
-game_table = document.getElementById("BridgesTable");
-max_x = game_table.rows.length;
-max_y = game_table.rows[0].cells.length;
 
 function getImgAt(x,y) {
     var cell = game_table.rows[y].cells[x];
@@ -22,7 +25,12 @@ function setCellStyle(x, y, str) {
     img.style.outline = str;
 }
 
-window.onkeypress = function(e) {
+var initted = false;
+function onpress(e) {
+    if(!initted) {
+        init_puzzle();
+        initted = true;
+    }
     var img = getImgAt(your_position_x, your_position_y);
     var xdelta = 0;
     var ydelta = 0;
@@ -63,7 +71,7 @@ window.onkeypress = function(e) {
     if(clickx != 0 || clicky != 0) {
         var rect = img.getBoundingClientRect();
         var evt = new MouseEvent("mousedown", {
-            view: window,            
+            view: unsafeWindow,            
             clientX: rect.left + 1,
             clientY: rect.top + 1            
         });
@@ -71,7 +79,7 @@ window.onkeypress = function(e) {
         
         var newtarget = getImgAt(your_position_x + clickx, your_position_y + clicky); 
         var evt = new MouseEvent("mouseover", {
-            view: window,            
+            view: unsafeWindow,            
             clientX: rect.left + 1 + 18*clickx,
             clientY: rect.top + 1 + 18*clicky            
         });
@@ -79,13 +87,13 @@ window.onkeypress = function(e) {
         
         
         var evt = new MouseEvent("mouseup", {
-            view: window,            
+            view: unsafeWindow,            
             clientX: rect.left + 1 + 18*clickx,
             clientY: rect.top + 1 + 18*clicky   
         });
         document.dispatchEvent(evt);
         img.dispatchEvent(evt);
-    }
-    
-    
+    }     
 }
+
+document.body.addEventListener('keypress', onpress);
