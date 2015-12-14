@@ -25,6 +25,33 @@ function setCellStyle(x, y, str) {
     img.style.outline = str;
 }
 
+function doClick(img, clickx, clicky) {
+    var rect = img.getBoundingClientRect();
+    var evt = new MouseEvent("mousedown", {
+        view: unsafeWindow,            
+        clientX: rect.left + 1,
+        clientY: rect.top + 1            
+    });
+    img.dispatchEvent(evt);
+
+    var newtarget = getImgAt(your_position_x + clickx, your_position_y + clicky); 
+    var evt = new MouseEvent("mouseover", {
+        view: unsafeWindow,            
+        clientX: rect.left + 1 + 18*clickx,
+        clientY: rect.top + 1 + 18*clicky            
+    });
+    newtarget.dispatchEvent(evt);
+
+
+    var evt = new MouseEvent("mouseup", {
+        view: unsafeWindow,            
+        clientX: rect.left + 1 + 18*clickx,
+        clientY: rect.top + 1 + 18*clicky   
+    });
+    document.dispatchEvent(evt);
+    img.dispatchEvent(evt);
+}
+
 var initted = false;
 function onpress(e) {
     if(!initted) {
@@ -38,20 +65,36 @@ function onpress(e) {
     var clicky = 0;
     if(e.keyCode == 'w'.charCodeAt(0)) {
         ydelta = -1;         
+    } else if(e.keyCode == 'W'.charCodeAt(0)) {
+        ydelta = -5;
     } else if(e.keyCode == 'a'.charCodeAt(0)) {
         xdelta = -1;
+    } else if(e.keyCode == 'A'.charCodeAt(0)) {
+        xdelta = -5;
     } else if(e.keyCode == 's'.charCodeAt(0)) {
         ydelta = 1;
+    } else if(e.keyCode == 'S'.charCodeAt(0)) {
+        ydelta = 5;
     } else if(e.keyCode == 'd'.charCodeAt(0)) {
         xdelta = 1;
+    } else if(e.keyCode == 'D'.charCodeAt(0)) {
+        xdelta = 5;
     } else if(e.keyCode == 'i'.charCodeAt(0)) {        
         clicky = -1;       
+    } else if(e.keyCode == 'I'.charCodeAt(0)) {        
+        clicky = -2;       
     } else if(e.keyCode == 'j'.charCodeAt(0)) {
         clickx = -1;
+    } else if(e.keyCode == 'J'.charCodeAt(0)) {
+        clickx = -2;
     } else if(e.keyCode == 'k'.charCodeAt(0)) {
         clicky = 1;
+    } else if(e.keyCode == 'K'.charCodeAt(0)) {
+        clicky = 2;
     } else if(e.keyCode == 'l'.charCodeAt(0)) {
         clickx = 1;
+    } else if(e.keyCode == 'L'.charCodeAt(0)) {
+        clickx = 2;
     } else if(e.keyCode == 13) {
         //finish the board when you press enter
         document.getElementById("btnReady").click();
@@ -68,32 +111,18 @@ function onpress(e) {
     }
     
     
-    if(clickx != 0 || clicky != 0) {
-        var rect = img.getBoundingClientRect();
-        var evt = new MouseEvent("mousedown", {
-            view: unsafeWindow,            
-            clientX: rect.left + 1,
-            clientY: rect.top + 1            
-        });
-        img.dispatchEvent(evt);
-        
-        var newtarget = getImgAt(your_position_x + clickx, your_position_y + clicky); 
-        var evt = new MouseEvent("mouseover", {
-            view: unsafeWindow,            
-            clientX: rect.left + 1 + 18*clickx,
-            clientY: rect.top + 1 + 18*clicky            
-        });
-        newtarget.dispatchEvent(evt);
-        
-        
-        var evt = new MouseEvent("mouseup", {
-            view: unsafeWindow,            
-            clientX: rect.left + 1 + 18*clickx,
-            clientY: rect.top + 1 + 18*clicky   
-        });
-        document.dispatchEvent(evt);
-        img.dispatchEvent(evt);
-    }     
+    while(clickx != 0) {
+       doClick(img, clickx, 0);
+       if(clickx < 0) ++clickx;
+          else --clickx;
+    }
+    
+    while(clicky != 0) {
+       doClick(img, 0, clicky);
+       if(clicky < 0) ++clicky;
+          else --clicky;
+    }
+         
 }
 
 document.body.addEventListener('keypress', onpress);
