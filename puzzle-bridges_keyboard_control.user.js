@@ -98,6 +98,9 @@ function onpress(e) {
     } else if(e.keyCode == 13) {
         //finish the board when you press enter
         document.getElementById("btnReady").click();
+    } else if(e.keyCode == '0'.charCodeAt(0)) { 
+        //get a new puzzle when you press 0
+        document.getElementsByName("new")[0].click(); 
     }
     
     
